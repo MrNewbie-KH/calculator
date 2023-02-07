@@ -29,19 +29,25 @@
   gap: 10px;
 }
 .screen {
+  padding: 10px;
   flex: 0 1 120px;
   background-color: #ffefd6;
   margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .btn {
   margin: 5px;
-  font-family: serif;
+  font-family: sans-serif;
   border: none;
   border-radius: 12px;
   font-size: 16px;
   font-weight: bold;
   transition-duration: 0.2s;
+  background-color: #d5c9b6;
 }
+
 .clear-delete {
   display: flex;
   gap: 10px;
@@ -52,12 +58,12 @@
   padding: 12px 18px;
   border: none;
   border-radius: 5px;
-  background-color: #f2bac4;
+  background-color: #a14d3a;
 }
 
 .btn:hover {
   background-color: #3a8891;
 }
 .clear-delete .btn:hover {
-  background-color: rgb(172, 81, 81);
+  background-color: rgb(146, 35, 35);
 }
