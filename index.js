@@ -6,34 +6,39 @@ equation.style.fontSize = "18px";
 answer.style.alignSelf = "last baseLine";
 screen.appendChild(equation);
 screen.appendChild(answer);
-let val, op1, op2, operation, lastElement;
+let val,
+  op1,
+  op2,
+  operation,
+  operatorTriggered = 0,
+  decimalPoint = 0;
 // ==================== functionality =========================
 // add
-const add = function (operand1, operand2) {
+const add = function (operand1 = 0, operand2 = 0) {
   return operand1 + operand2;
 };
 // subtract
-const subtract = function (operand1, operand2) {
+const subtract = function (operand1 = 0, operand2 = 0) {
   return operand1 - operand2;
 };
 // multiply
-const multiply = function (operand1, operand2) {
+const multiply = function (operand1 = 0, operand2 = 0) {
   return operand1 * operand2;
 };
 // divide
-const divide = function (operand1, operand2) {
+const divide = function (operand1 = 0, operand2 = 1) {
   return operand1 / operand2;
 };
 // operate
 const operate = function (operand1, operand2, operator) {
   if (operator === "+") {
-    add(operand1, operand2);
+    return add(operand1, operand2);
   } else if (operator === "-") {
-    subtract(operand1, operand2);
+    return subtract(operand1, operand2);
   } else if (operator === "x") {
-    multiply(operand1, operand2);
+    return multiply(operand1, operand2);
   } else if (operator === "/") {
-    divide(operand1, operand2);
+    return divide(operand1, operand2);
   }
 };
 // clear
@@ -49,15 +54,51 @@ const del = function () {
 const buttons = document.querySelectorAll(".btn");
 for (let i = 0; i < buttons.length; i++)
   buttons[i].addEventListener("click", function () {
+    // check for clicking a number
     if (buttons[i].classList.contains("number")) {
-      equation.textContent = equation.textContent + buttons[i].value;
+      val = undefined;
+      if (buttons[i].value === ".") {
+        if (decimalPoint === 0) {
+          decimalPoint = 1;
+          if (
+            equation.textContent.length === 0 ||
+            equation.textContent.charAt(equation.textContent.length - 1) === " "
+          )
+            equation.textContent =
+              equation.textContent + "0" + buttons[i].value;
+          else equation.textContent = equation.textContent + buttons[i].value;
+        }
+      } else equation.textContent = equation.textContent + buttons[i].value;
     } else if (buttons[i].classList.contains("operator")) {
+      if (val) {
+        equation.textContent = val;
+      }
       if (equation.textContent.length > 0) {
         if (
           equation.textContent.charAt(equation.textContent.length - 1) >= "0" &&
-          equation.textContent.charAt(equation.textContent.length - 1) <= "9"
+          equation.textContent.charAt(equation.textContent.length - 1) <= "9" &&
+          operatorTriggered === 0 &&
+          buttons[i].value !== "="
         ) {
+          operatorTriggered = 1;
           equation.textContent += " " + buttons[i].value + " ";
+        } else if (buttons[i].value === "=") {
+          const array = equation.textContent.split(" ");
+          [op1, operation, op2] = [...array];
+          if (array.length === 1) {
+            if (op1.charAt(op1.length - 1) === ".") {
+              op1 += "0";
+            }
+            val = op1;
+          } else if ((op2 === "0" || op2 === "") && operation === "/")
+            val = "ERROR";
+          else {
+            val = operate(+op1, +op2, operation);
+            console.log(val);
+          }
+          answer.textContent = val;
+          equation.textContent = "";
+          operatorTriggered = 0;
         }
       }
     }
