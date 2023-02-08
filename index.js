@@ -42,12 +42,22 @@ const operate = function (operand1, operand2, operator) {
   }
 };
 // clear
+const clear = function () {
+  equation.textContent = undefined;
+  answer.textContent = undefined;
+  val = undefined;
+  op1 = undefined;
+  op2 = undefined;
+  operation = undefined;
+  operatorTriggered = 0;
+  decimalPoint = 0;
+};
 // delete
-const del = function () {
+const del = function (num) {
   if (equation.textContent !== undefined)
     equation.textContent = equation.textContent.substring(
       0,
-      equation.textContent.length - 1
+      equation.textContent.length - num
     );
 };
 // ===================== click a button=======================
@@ -71,9 +81,24 @@ for (let i = 0; i < buttons.length; i++)
       } else equation.textContent = equation.textContent + buttons[i].value;
     } else if (buttons[i].classList.contains("operator")) {
       if (val) {
-        equation.textContent = val;
+        if (val !== "ERROR") {
+          equation.textContent = "" + val;
+          decimalPoint = 0;
+        } else {
+          clear();
+        }
+      } else {
+        decimalPoint = 0;
       }
-      if (equation.textContent.length > 0) {
+      if (buttons[i].value === "clear") clear();
+      else if (buttons[i].value === "del") {
+        if (
+          equation.textContent.charAt(equation.textContent.length - 1) === " "
+        ) {
+          operatorTriggered = 0;
+          val = del(3);
+        } else val = del(1);
+      } else {
         if (
           equation.textContent.charAt(equation.textContent.length - 1) >= "0" &&
           equation.textContent.charAt(equation.textContent.length - 1) <= "9" &&
@@ -90,14 +115,14 @@ for (let i = 0; i < buttons.length; i++)
               op1 += "0";
             }
             val = op1;
-          } else if ((op2 === "0" || op2 === "") && operation === "/")
+          } else if ((parseFloat(op2) == 0 || op2 === "") && operation === "/")
             val = "ERROR";
           else {
             val = operate(+op1, +op2, operation);
             console.log(val);
           }
           answer.textContent = val;
-          equation.textContent = "";
+          equation.textContent = undefined;
           operatorTriggered = 0;
         }
       }
